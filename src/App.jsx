@@ -15,13 +15,18 @@ import {
 import './index.css';
 import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
-
+import ClientDashboard from './ClientDashboard';
+import ManagerDashboard from './ManagerDashboard';
+import AdminDashboard from './AdminDashboard';
 
 function App() {
   const [page, setPage] = useState('home');
 
-  if (page === 'login')    return <LoginPage    onNavigate={setPage} />;
-  if (page === 'register') return <RegisterPage onNavigate={setPage} />;
+  if (page === 'login')             return <LoginPage         onNavigate={setPage} />;
+  if (page === 'register')          return <RegisterPage      onNavigate={setPage} />;
+  if (page === 'client-dashboard')  return <ClientDashboard   onNavigate={setPage} />;
+  if (page === 'manager-dashboard') return <ManagerDashboard  onNavigate={setPage} />;
+  if (page === 'admin-dashboard')   return <AdminDashboard    onNavigate={setPage} />;
 
   return (
     <div className="app">

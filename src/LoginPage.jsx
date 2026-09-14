@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Pill, Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, User, Briefcase } from 'lucide-react';
+import { Pill, Mail, Lock, Eye, EyeOff, ArrowRight, ShieldCheck, User, Briefcase, Zap } from 'lucide-react';
 
 const roles = [
-  { id: 'client',  label: 'Client',   icon: User,        desc: 'Order medicines & consult doctors' },
-  { id: 'manager', label: 'Manager',  icon: Briefcase,   desc: 'Manage orders & operations' },
-  { id: 'admin',   label: 'Admin',    icon: ShieldCheck, desc: 'Full system access & control' },
+  { id: 'client',  label: 'Client',   icon: User,        desc: 'Access patient orders, prescriptions & medical consultations' },
+  { id: 'manager', label: 'Manager',  icon: Briefcase,   desc: 'Fulfill prescriptions, dispatch orders & manage stock' },
+  { id: 'admin',   label: 'Admin',    icon: ShieldCheck, desc: 'Enterprise administration, user access & system metrics' },
 ];
 
 export default function LoginPage({ onNavigate }) {
@@ -13,9 +13,20 @@ export default function LoginPage({ onNavigate }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const handleRoleLogin = (roleId) => {
+    if (roleId === 'admin') {
+      onNavigate('admin-dashboard');
+    } else if (roleId === 'manager') {
+      onNavigate('manager-dashboard');
+    } else {
+      onNavigate('client-dashboard');
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert(`Signing in as ${selectedRole}…`);
+    // Direct login without requiring credentials
+    handleRoleLogin(selectedRole);
   };
 
   return (
@@ -34,7 +45,7 @@ export default function LoginPage({ onNavigate }) {
             Healthcare at your <span className="gradient-text">fingertips.</span>
           </h2>
           <p className="auth-brand-sub">
-            Genuine medicines, expert consultations, and lightning-fast delivery — all in one platform.
+            Genuine medicines, expert consultations, and lightning-fast delivery — all in one unified platform.
           </p>
           <div className="auth-brand-badges">
             <div className="auth-badge"><ShieldCheck size={16} /> 100% Genuine</div>
@@ -46,10 +57,10 @@ export default function LoginPage({ onNavigate }) {
         <div className="auth-card">
           <div className="auth-card-header">
             <h1 className="auth-title">Welcome back</h1>
-            <p className="auth-subtitle">Sign in to your MediConnect account</p>
+            <p className="auth-subtitle">Select your portal role to enter immediately</p>
           </div>
 
-          {/* Role Selector */}
+          {/* Role Selector Tabs (Default is client) */}
           <div className="role-selector">
             {roles.map(({ id, label, icon: Icon }) => (
               <button
@@ -68,27 +79,65 @@ export default function LoginPage({ onNavigate }) {
             {roles.find(r => r.id === selectedRole)?.desc}
           </p>
 
+          {/* Quick 1-Click Access Box */}
+          <div className="instant-login-banner">
+            <div className="instant-title">
+              <Zap size={14} className="text-amber" />
+              <span>Direct One-Click Entry (No password required)</span>
+            </div>
+            <div className="instant-buttons">
+              <button 
+                type="button"
+                className="instant-btn client-instant" 
+                onClick={() => handleRoleLogin('client')}
+              >
+                Enter as Client →
+              </button>
+              <button 
+                type="button"
+                className="instant-btn manager-instant" 
+                onClick={() => handleRoleLogin('manager')}
+              >
+                Enter as Manager →
+              </button>
+              <button 
+                type="button"
+                className="instant-btn admin-instant" 
+                onClick={() => handleRoleLogin('admin')}
+              >
+                Enter as Admin →
+              </button>
+            </div>
+          </div>
+
           <form className="auth-form" onSubmit={handleSubmit}>
             <div className="form-group">
-              <label className="form-label" htmlFor="login-email">Email address</label>
+              <label className="form-label" htmlFor="login-email">
+                Email address <span className="text-muted font-normal text-xs">(optional for demo)</span>
+              </label>
               <div className="input-wrapper">
                 <span className="input-icon"><Mail size={18} /></span>
                 <input
                   id="login-email"
                   type="email"
                   className="form-input"
-                  placeholder="you@example.com"
+                  placeholder={
+                    selectedRole === 'admin' ? 'admin@mediconnect.com' :
+                    selectedRole === 'manager' ? 'manager@mediconnect.com' :
+                    'alex.carter@mediconnect.com'
+                  }
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  required
                 />
               </div>
             </div>
 
             <div className="form-group">
               <div className="form-label-row">
-                <label className="form-label" htmlFor="login-password">Password</label>
-                <a href="#" className="form-link">Forgot password?</a>
+                <label className="form-label" htmlFor="login-password">
+                  Password <span className="text-muted font-normal text-xs">(optional for demo)</span>
+                </label>
+                <a href="#" className="form-link" onClick={(e) => e.preventDefault()}>Forgot password?</a>
               </div>
               <div className="input-wrapper">
                 <span className="input-icon"><Lock size={18} /></span>
@@ -99,7 +148,6 @@ export default function LoginPage({ onNavigate }) {
                   placeholder="••••••••"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  required
                 />
                 <button
                   type="button"
@@ -113,7 +161,7 @@ export default function LoginPage({ onNavigate }) {
             </div>
 
             <button id="login-submit" type="submit" className="btn btn-primary btn-full">
-              Sign In
+              Login to {selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)} Dashboard
               <ArrowRight size={18} />
             </button>
           </form>
